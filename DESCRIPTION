@@ -1,0 +1,20 @@
+Package: XboostingMM
+Type: Package
+Title: Extreme Gradient Boosting Mix Effects Model
+Version: 0.1.0
+Author: Marco Espinoza
+Maintainer: Marco Espinoza <espinozamarco70@gmail.com>
+Description: Extreme Gradient Boosting is a method developed by
+    Chen & Guestrin (2016) <10.1145/2939672.2939785>. This package
+    leverages this method along with the proposal by Salditt, Humberg & Nestler (2023)
+    <10.1080/00273171.2022.2146638> where Gradient Tree Boosting is combined for
+    hierarchical data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+  R (>= 3.1)
+Imports:
+  xgboost,
+  Matrix
+RoxygenNote: 7.3.1
