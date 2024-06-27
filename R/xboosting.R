@@ -14,18 +14,22 @@
 # 10.1080/00273171.2022.2146638
 # =========================================================================
 
-#' Xboosting
+#' Computes Extreme Gradient Boosting Trees
 #'
-#' @param formula
-#' @param data
-#' @param loss
-#' @param n.trees
-#' @param shrinkage
-#' @param interaction.depth
-#' @param minsplit
-#' @param subsample
+#' @description
+#' `xboosting()` relies on the Extreme Gradient Boosting model
+#' to generate the decision trees and subsequently an assembly of m trees.
 #'
-#' @return
+#' @param formula an object of class formula
+#' @param data list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.
+#' @param loss by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.
+#' @param n.trees number of trees to be generated. Default: 100
+#' @param shrinkage learning rate. Default: 0.1
+#' @param interaction.depth maximum depth of the trees. Default: 1
+#' @param minsplit minimum observations for a tree to split. Default: 20
+#' @param subsample sub-sample size for the tree training: Default: 0.5
+#'
+#' @returns an xtremeBoost object
 #' @export
 #'
 #' @examples
@@ -110,13 +114,16 @@ xboosting <- function(formula,
 }
 
 
-#' XGBoost prediction
+#' Performs a prediction from an XtremeBoost object
 #'
-#' @param object
-#' @param newdata
-#' @param n.trees
+#' @description
+#' It takes an XtremeBoost model from the `xgboosting()` and performs a prediction
 #'
-#' @return
+#' @param object an XtremeBoost object
+#' @param newdata data required to perform
+#' @param n.trees number of trees to use from the object.
+#'
+#' @returns a vector with predictions
 #' @export
 #'
 #' @examples
@@ -149,7 +156,10 @@ predict.xgb <- function(object, newdata, n.trees) {
   return(fit_pred)
 }
 
-#' GLL function
+#' Log-Likelihood convergence function
+#'
+#' @description
+#' Function that takes the estimates of the `boost_mem()` and checks for convergence
 #'
 #' @param Z
 #' @param ID
@@ -193,21 +203,25 @@ mem_boost_gll <- function( Z = NULL, ID = NULL, bhat = NULL,
 
 #' Iteration function for Tree-based MM
 #'
-#' @param formula
-#' @param data
-#' @param random
-#' @param shrinkage
-#' @param loss
-#' @param interaction.depth
-#' @param n.trees
-#' @param minsplit
-#' @param subsample
-#' @param conv_memboost
-#' @param maxIter_memboost
-#' @param minIter_memboost
-#' @param verbose_memboost
+#' @description
+#' Function that leverages `xboosting()` to estimate the trees.
+#' `predict.xgb()` for prediction, and `mem_boost_gll()` for convergence.
 #'
-#' @return
+#' @param formula an object of class formula
+#' @param data list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.
+#' @param random
+#' @param shrinkage learning rate. Default: 0.1
+#' @param loss by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.
+#' @param interaction.depth maximum depth of the trees. Default: 1
+#' @param n.trees number of trees to be generated. Default: 100
+#' @param minsplit minimum observations for a tree to split. Default: 20
+#' @param subsample sub-sample size for the tree training: Default: 0.5
+#' @param conv_memboost Convergence threshold. Default: 0.001
+#' @param maxIter_memboost maximum iterations. Default: 100
+#' @param minIter_memboost minimum iterations. Default: 0
+#' @param verbose_memboost Print information
+#'
+#' @returns list of values
 #' @export
 #'
 #' @examples

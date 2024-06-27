@@ -19,7 +19,18 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-XboostingMM leverages the package XGBoost proposed by (Chen & Guestrin 2016)[<https://doi.org/10.1145/2939672.2939785>] and the gradient tree boosting functions for Hierarchical Data proposed by (Humberg, Nestler & Salditt 2023)[<https://doi.org/10.1080/00273171.2022.2146638>]. Designed for unit-level Small Area Estimation.
+XboostingMM is a semi-parametric model that harnesses the high-performance properties of XGBoost, including its speed, scalability, and superior performance compared to other methods. By integrating mixed-effects models for hierarchical data, this package offers a flexible estimation approach that can bypass traditional linear model assumptions and handle data limitations effectively. This makes it particularly valuable for applications in Small Area Estimation.
+
+The XboostingMM package comprises four key functions: `boost_mem()`, `mem_boost_gll()`, `predict.xgb()`, and `xboosting()`. 
+
+1. **`mem_boost_gll()`**: This function checks the convergence of the algorithm.
+2. **`xboosting()`**: This function estimates the XGBoost trees.
+3. **`boost_mem()`**: This function leverages the XGBoost trees for the estimation of random effects, iterating until convergence is reached.
+4. **`predict.xgb()`**: This function makes predictions using the XGBoost model.
+
+To use the package, start by running `xboosting()` to estimate the XGBoost trees. Then, use `boost_mem()` to apply these trees for random effects estimation. The `mem_boost_gll()` function can be used to monitor the convergence of the algorithm. Finally, `predict.xgb()` can be utilized for making predictions with the trained model.
+
+For further information regarding each function, please refer to the function documentation. 
 
 ## Installation
 
