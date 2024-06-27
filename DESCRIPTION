@@ -1,14 +1,20 @@
 Package: XboostingMM
 Type: Package
-Title: Extreme Gradient Boosting Mix Effects Model
+Title: Extreme Gradient Boosting Mix Effects Model: Machine learning algorithm for hierarchical data
 Version: 0.1.0
-Author: Marco Espinoza
+Authors@R: person("Espinoza", "Marco", email = "espinozamarco70@gmail.com",
+  role = "aut")
+URL: https://github.com/antonioespinoza98/XboostingMM
+BugReports: https://github.com/antonioespinoza98/XboostingMM/issues
 Maintainer: Marco Espinoza <espinozamarco70@gmail.com>
-Description: Extreme Gradient Boosting is a method developed by
-    Chen & Guestrin (2016) <10.1145/2939672.2939785>. This package
-    leverages this method along with the proposal by Salditt, Humberg & Nestler (2023)
-    <10.1080/00273171.2022.2146638> where Gradient Tree Boosting is combined for
-    hierarchical data.
+Description: XboostingMM is a powerful package that combines 
+    the strengths of Extreme Gradient Boosting (XGBoost) and mixed-effects models, 
+    offering a robust semi-parametric algorithm. 
+    Designed to provide the best of both worlds, it leverages the speed, scalability, 
+    and performance of XGBoost while incorporating the adaptability of mixed-effects models. 
+    This powerful combination allows for effective handling of hierarchical data 
+    and provides flexible estimation techniques that can bypass traditional linear model assumptions, 
+    making it particularly useful for Small Area Estimation and other complex data scenarios.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

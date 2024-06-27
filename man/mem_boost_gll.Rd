@@ -2,7 +2,7 @@
 % Please edit documentation in R/xboosting.R
 \name{mem_boost_gll}
 \alias{mem_boost_gll}
-\title{GLL function}
+\title{Log-Likelihood convergence function}
 \usage{
 mem_boost_gll(
   Z = NULL,
@@ -19,5 +19,5 @@ mem_boost_gll(
 \item{Sigma2}{}
 }
 \description{
-GLL function
+Function that takes the estimates of the `boost_mem()` and checks for convergence
 }

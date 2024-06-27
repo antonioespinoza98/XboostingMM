@@ -2,13 +2,20 @@
 % Please edit documentation in R/xboosting.R
 \name{predict.xgb}
 \alias{predict.xgb}
-\title{XGBoost prediction}
+\title{Performs a prediction from an XtremeBoost object}
 \usage{
 \method{predict}{xgb}(object, newdata, n.trees)
 }
 \arguments{
-\item{n.trees}{}
+\item{object}{an XtremeBoost object}
+
+\item{newdata}{data required to perform}
+
+\item{n.trees}{number of trees to use from the object.}
+}
+\value{
+a vector with predictions
 }
 \description{
-XGBoost prediction
+It takes an XtremeBoost model from the `xgboosting()` and performs a prediction
 }

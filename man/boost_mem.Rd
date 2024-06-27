@@ -21,8 +21,34 @@ boost_mem(
 )
 }
 \arguments{
-\item{verbose_memboost}{}
+\item{formula}{an object of class formula}
+
+\item{data}{list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.}
+
+\item{shrinkage}{learning rate. Default: 0.1}
+
+\item{loss}{by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.}
+
+\item{interaction.depth}{maximum depth of the trees. Default: 1}
+
+\item{n.trees}{number of trees to be generated. Default: 100}
+
+\item{minsplit}{minimum observations for a tree to split. Default: 20}
+
+\item{subsample}{sub-sample size for the tree training: Default: 0.5}
+
+\item{conv_memboost}{Convergence threshold. Default: 0.001}
+
+\item{maxIter_memboost}{maximum iterations. Default: 100}
+
+\item{minIter_memboost}{minimum iterations. Default: 0}
+
+\item{verbose_memboost}{Print information}
+}
+\value{
+list of values
 }
 \description{
-Iteration function for Tree-based MM
+Function that leverages `xboosting()` to estimate the trees.
+`predict.xgb()` for prediction, and `mem_boost_gll()` for convergence.
 }

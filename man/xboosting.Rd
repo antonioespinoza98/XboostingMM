@@ -2,7 +2,7 @@
 % Please edit documentation in R/xboosting.R
 \name{xboosting}
 \alias{xboosting}
-\title{Xboosting}
+\title{Computes Extreme Gradient Boosting Trees}
 \usage{
 xboosting(
   formula,
@@ -16,8 +16,26 @@ xboosting(
 )
 }
 \arguments{
-\item{subsample}{}
+\item{formula}{an object of class formula}
+
+\item{data}{list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.}
+
+\item{loss}{by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.}
+
+\item{n.trees}{number of trees to be generated. Default: 100}
+
+\item{shrinkage}{learning rate. Default: 0.1}
+
+\item{interaction.depth}{maximum depth of the trees. Default: 1}
+
+\item{minsplit}{minimum observations for a tree to split. Default: 20}
+
+\item{subsample}{sub-sample size for the tree training: Default: 0.5}
+}
+\value{
+an xtremeBoost object
 }
 \description{
-Xboosting
+`xboosting()` relies on the Extreme Gradient Boosting model
+to generate the decision trees and subsequently an assembly of m trees.
 }
