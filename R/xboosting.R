@@ -43,9 +43,30 @@ xboosting <- function(formula,
                       shrinkage = 0.1,
                       interaction.depth = 1,
                       minsplit = 20,
-                      subsample = 0.5){
+                      lambda = 1,
+                      alpha = 0,
+                      subsample = 0.5) {
+  # -- CHECKS
 
+  if (missing(subsample)) {
+    warning("Subsample using default value of 0.5")
+  }
+  if (missing(loss)) {
+    warning("Loss function using default value.")
+  }
+  if (missing(data)) {
+    stop("Must provide a dataset.")
+  }
+  if (missing(n.trees) |
+      missing(shrinkage) |
+      missing(interaction.depth) | missing(minsplit)) {
+    warning("Using default values trees, learning rate, etc. Please refer to documentation.")
+  }
 
+  # Check if data frame is data.frame()
+  if (!is.data.frame(data)) {
+    stop("Data must be a data.frame class object.")
+  }
   # arrangements ------------------------------------------------------------
   #- get predictive variable names
   PredNames <- attr(stats::terms(formula), "term.labels")
@@ -53,7 +74,7 @@ xboosting <- function(formula,
   X <- model.frame(terms(reformulate(PredNames)), data = data)
   # Since XGBoost only takes matrix-wise objects, we need to convert it to matrix
   # Also, categorical variables must be passed as numerical (independent variables)
-  X_matrix <- Matrix::sparse.model.matrix( ~., data = data[,PredNames])[,-1]
+  X_matrix <- Matrix::sparse.model.matrix(~ ., data = data[, PredNames])[, -1]
 
   #- get y
   OutcomeName <- formula[[2]]
@@ -64,9 +85,9 @@ xboosting <- function(formula,
     objective = loss,
     eta = shrinkage,
     max_depth = interaction.depth,
-    min_child_weight = minsplit
-    # subsample = subsample,
-    # colsample_bytree = colsample_bytree
+    min_child_weight = minsplit,
+    lambda = lambda,
+    alpha = alpha
   )
 
   # Train XGBoost model -----------------------------------------------------
@@ -78,9 +99,11 @@ xboosting <- function(formula,
   # - algorithm so we start off with the mean as initial value, instead of 0.
   f <- rep(mean(y), n)
   f0 <- unique(f)
-  for(i in 1:n.trees){
+  cat("Estimating model", "\n")
+  progress_est <- txtProgressBar(min = 0, max = n.trees, style = 3)
+  for (i in 1:n.trees) {
     # subsampling at each iteration to reduce overfitting
-    inbag.idx <- sample(n, replace = F, size = subsample*n)
+    inbag.idx <- sample(n, replace = F, size = subsample * n)
     ysub <- y[inbag.idx]
     Xsub <- data.frame(X[inbag.idx, ])
     colnames(Xsub) <- colnames(X)
@@ -88,30 +111,39 @@ xboosting <- function(formula,
     # Get residuals
     dsub <- ysub - fsub
     r <- dsub
-    Xsub_matrix <- Matrix::sparse.model.matrix( ~., data = Xsub[,PredNames])[,-1]
+    Xsub_matrix <- Matrix::sparse.model.matrix(~ ., data = Xsub[, PredNames])[, -1]
     # Get the i trees
-    model <- xgboost::xgboost(params = params,
-                              data = Xsub_matrix,
-                              label = r,
-                              nrounds = 1,
-                              verbose = 0)
+    model <- xgboost::xgboost(
+      params = params,
+      data = Xsub_matrix,
+      label = r,
+      nrounds = 1,
+      verbose = 0
+    )
 
-    cat("Estimating model:", i, "\n")
+    setTxtProgressBar(progress_est, i)
     # - Save models for future prediction
     models[[i]] <- model
     # - get prediction for f residuals
     pred <- predict(model, newdata = X_matrix)
     # - update overall model
     f <- f + shrinkage * pred
-    preds_matrix[,i] <- pred
+    preds_matrix[, i] <- pred
   }
+  close(progress_est)
 
   # Return the model and predictions ----------------------------------------
 
   # preds <- predict(model, newdata = X)
-  out <- list(models = models, pred_matrix = preds_matrix,
-              fhat = f, formula = formula, finit = f0, n.trees = n.trees,
-              shrinkage = shrinkage)
+  out <- list(
+    models = models,
+    pred_matrix = preds_matrix,
+    fhat = f,
+    formula = formula,
+    finit = f0,
+    n.trees = n.trees,
+    shrinkage = shrinkage
+  )
   class(out) <- "xtremeBoost"
   return(out)
 }
@@ -138,22 +170,20 @@ predict.xgb <- function(object, newdata, n.trees) {
   # Get shrinkage value
   shrinkage <- object$shrinkage
   # Create DMatrix for newdata
-  dnew <- Matrix::sparse.model.matrix( ~., data = newdata[,PredNames])[,-1]
+  dnew <- Matrix::sparse.model.matrix(~ ., data = newdata[, PredNames])[, -1]
 
   # Generate predictions
-  preds <- sapply(1:n.trees, function(i){
-    shrinkage * predict(object$models[[i]],
-                        newdata = dnew
-    )
+  preds <- sapply(1:n.trees, function(i) {
+    shrinkage * predict(object$models[[i]], newdata = dnew)
   })
 
   # Get initial F_0
   f0 <- object$finit
   # - Get a prediction value
-  if ( is.null( dim(preds) ) ){
+  if (is.null(dim(preds))) {
     fit_pred <- f0 + sum(preds)
   } else {
-    fit_pred <- f0 + apply( preds, 1, sum )
+    fit_pred <- f0 + apply(preds, 1, sum)
   }
 
 
@@ -179,29 +209,35 @@ predict.xgb <- function(object, newdata, n.trees) {
 #' @export
 #'
 #' @examples
-mem_boost_gll <- function( Z = NULL, ID = NULL, bhat = NULL,
-                           ehat = NULL, UniqueID = NULL, NID = NULL,
-                           D = NULL, Sigma2 = NULL )
+mem_boost_gll <- function(Z = NULL,
+                          ID = NULL,
+                          bhat = NULL,
+                          ehat = NULL,
+                          UniqueID = NULL,
+                          NID = NULL,
+                          D = NULL,
+                          Sigma2 = NULL)
 {
   #- define ll:
   ll <- 0
   #- compute inverse and determinant of D:
-  invD <- solve( D )
-  logD <- as.numeric( determinant( D, log = TRUE )$modulus )
+  invD <- solve(D)
+  logD <- as.numeric(determinant(D, log = TRUE)$modulus)
   #- let's go:
-  for ( ii in 1:NID ) {
+  for (ii in 1:NID) {
     #- get index variable:
-    idx <- which( ID == UniqueID[ii] )
+    idx <- which(ID == UniqueID[ii])
     #- get person data:
     ei <- ehat[idx]
-    Zi <- Z[idx,,drop = FALSE]
-    ni <- dim( Zi )[1]
-    Ri <- diag( as.numeric( Sigma2 ), ni )
+    Zi <- Z[idx, , drop = FALSE]
+    ni <- dim(Zi)[1]
+    Ri <- diag(as.numeric(Sigma2), ni)
     #- compute inverse matrix and determinant:
-    InvRi <- solve( Ri )
-    logR <- as.numeric( determinant( Ri, log = TRUE )$modulus )
+    InvRi <- solve(Ri)
+    logR <- as.numeric(determinant(Ri, log = TRUE)$modulus)
     #- compute ll:
-    ll <- ll + logD + logR + t(ei)%*%InvRi%*%(ei) + t(bhat[ii,])%*%invD%*%bhat[ii,]
+    ll <- ll + logD + logR + t(ei) %*% InvRi %*% (ei) + t(bhat[ii, ]) %*%
+      invD %*% bhat[ii, ]
   }
   return(-ll)
 }
@@ -232,18 +268,20 @@ mem_boost_gll <- function( Z = NULL, ID = NULL, bhat = NULL,
 #'
 #' @examples
 boost_mem <- function(formula,
-                           data = NULL,
-                           random = NULL,
-                           shrinkage = 0.3,
-                           loss = "reg:squarederror",
-                           interaction.depth = 20,
-                           n.trees = 100,
-                           minsplit = 20,
-                           subsample = 0.5,
-                           conv_memboost = 0.001,
-                           maxIter_memboost = 100,
-                           minIter_memboost = 0,
-                           verbose_memboost = FALSE) {
+                      data = NULL,
+                      random = NULL,
+                      shrinkage = 0.3,
+                      loss = "reg:squarederror",
+                      interaction.depth = 20,
+                      n.trees = 100,
+                      minsplit = 20,
+                      subsample = 0.5,
+                      lambda = 1,
+                      alpha = 0,
+                      conv_memboost = 0.001,
+                      maxIter_memboost = 100,
+                      minIter_memboost = 0,
+                      verbose_memboost = FALSE) {
   # STEP 0: PREPARATION
 
   #- Get X
@@ -284,6 +322,7 @@ boost_mem <- function(formula,
   UniqueID <- unique(ID)
   NID <- length(UniqueID)
   p <- dim(Z)[2]
+  # Covariance matrix
   Dhat <- diag(1, p)
   Sigma2hat <- 1
   bhat <- matrix(0, nrow = NID , ncol = p)
@@ -340,6 +379,8 @@ boost_mem <- function(formula,
       shrinkage = shrinkage,
       interaction.depth = interaction.depth,
       minsplit = minsplit,
+      alpha = alpha,
+      lambda = lambda,
       subsample = subsample
     )
 
@@ -409,6 +450,7 @@ boost_mem <- function(formula,
       Sigma2 = Sigma2hat
     )
 
+    cat("Checking for convergence...", "\n")
     #- Verbose output:
     if (verbose_memboost) {
       h1 <- paste0("Loglikelihood: ",
@@ -424,6 +466,7 @@ boost_mem <- function(formula,
     if (noIterations > minIter_memboost &
         (absDiffLogLik < conv_memboost |
          noIterations >= maxIter_memboost)) {
+      cat("algorithm converged after: ", noIterations, " iterations")
       toIterate <- FALSE
     }
   } # while
@@ -436,10 +479,13 @@ boost_mem <- function(formula,
   #- output:
   out <- list(
     boosting_ensemble = tmpGTB,
+    # Covariance matrix
     var_random_effects = Dhat,
     errorVar = Sigma2hat,
     logLik = llnew,
     raneffs = bhat,
+    # error terms (residuals terms)
+    errorTerms = ehat,
     fhat = fhat,
     noIterations = noIterations,
     convWarning = convWarning,
@@ -476,25 +522,35 @@ boost_mem <- function(formula,
 #' @examples
 validation <- function(test = NULL,
                        prediction = NULL,
-                       validation_set= NULL,
+                       validation_set = NULL,
                        weights = NULL,
                        label = NULL,
                        region = NULL,
-                       model = NULL
-){
-
+                       model = NULL) {
   # --- REQUIREMENTS ---
   # Data set for predictions
-  if(missing(test)){stop("Must provide a test data set.")}
+  if (missing(test)) {
+    stop("Must provide a test data set.")
+  }
   # Check dimensions of vector and administrative record.
-  if(dim(test)[1] != length(prediction)){
+  if (dim(test)[1] != length(prediction)) {
     stop("Data set must have same length as prediction vector")
   }
-  if(missing(prediction)){stop("Must provide a prediction vector.")}
-  if(!is.vector(prediction)){stop("Prediction must be a vector. Check class()")}
-  if(missing(weights)){stop("Must provide a value for the weights.")}
-  if(missing(label)){stop("Must provide a value to be estimated.")}
-  if(missing(region)){stop("Must provide a value for the regions.")}
+  if (missing(prediction)) {
+    stop("Must provide a prediction vector.")
+  }
+  if (!is.vector(prediction)) {
+    stop("Prediction must be a vector. Check class()")
+  }
+  if (missing(weights)) {
+    stop("Must provide a value for the weights.")
+  }
+  if (missing(label)) {
+    stop("Must provide a value to be estimated.")
+  }
+  if (missing(region)) {
+    stop("Must provide a value for the regions.")
+  }
 
   # --- PROCESS ---
   # We add the prediction to the data set as a new column.
@@ -505,12 +561,9 @@ validation <- function(test = NULL,
   diseno <- as_survey_design(.data = validation_set, weights = weights)
   # Mean
   formula_label <- as.formula(paste("~", label))
-  formula_region <- as.formula(paste("~",region))
+  formula_region <- as.formula(paste("~", region))
 
-  media_est_srvyr <- svyby(formula_label,
-                           by = formula_region,
-                           design = diseno,
-                           svymean)
+  media_est_srvyr <- svyby(formula_label, by = formula_region, design = diseno, svymean)
 
   # Confidence intervals
   confint_int <- confint(svyby(
@@ -537,7 +590,8 @@ validation <- function(test = NULL,
   mapping <- rbind(media_est_srvyr[, -3], prediction_data)
 
   count_rep <- length(unique(validation_set$region))
-  estim <- c(rep("Directo", times = count_rep), rep(model, times = count_rep))
+  estim <- c(rep("Directo", times = count_rep),
+             rep(model, times = count_rep))
   mapping <- cbind(mapping, estim)
 
   # --- PLOT ---
@@ -554,6 +608,3 @@ validation <- function(test = NULL,
 
   return(out)
 }
-
-
-
