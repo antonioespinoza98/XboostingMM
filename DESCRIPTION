@@ -2,8 +2,8 @@ Package: XboostingMM
 Type: Package
 Title: Extreme Gradient Boosting Mix Effects Model: Machine learning algorithm for hierarchical data
 Version: 0.1.0
-Authors@R: person("Espinoza", "Marco", email = "espinozamarco70@gmail.com",
-  role = "aut")
+Authors@R: c(person("Espinoza", "Marco", email = "espinozamarco70@gmail.com",
+  role = c("aut","cre")))
 URL: https://github.com/antonioespinoza98/XboostingMM
 BugReports: https://github.com/antonioespinoza98/XboostingMM/issues
 Maintainer: Marco Espinoza <espinozamarco70@gmail.com>
