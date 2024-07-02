@@ -12,6 +12,8 @@ xboosting(
   shrinkage = 0.1,
   interaction.depth = 1,
   minsplit = 20,
+  lambda = 1,
+  alpha = 0,
   subsample = 0.5
 )
 }

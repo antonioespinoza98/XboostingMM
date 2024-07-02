@@ -14,6 +14,8 @@ boost_mem(
   n.trees = 100,
   minsplit = 20,
   subsample = 0.5,
+  lambda = 1,
+  alpha = 0,
   conv_memboost = 0.001,
   maxIter_memboost = 100,
   minIter_memboost = 0,
