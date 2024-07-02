@@ -39,3 +39,7 @@ an xtremeBoost object
 `xboosting()` relies on the Extreme Gradient Boosting model
 to generate the decision trees and subsequently an assembly of m trees.
 }
+\references{
+Chen T, He T, Benesty M, Khotilovich V, Tang Y, Cho H, Chen K, Mitchell R, Cano I,Zhou T, Li M, Xie J, Lin M, Geng Y, Li Y, Yuan J (2024). _xgboost: Extreme Gradient Boosting_. R package version 1.7.7.1,<https://CRAN.R-project.org/package=xgboost>.
+Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
+}

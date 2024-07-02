@@ -52,3 +52,6 @@ list of values
 Function that leverages `xboosting()` to estimate the trees.
 `predict.xgb()` for prediction, and `mem_boost_gll()` for convergence.
 }
+\references{
+Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
+}

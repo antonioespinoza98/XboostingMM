@@ -3,4 +3,5 @@
 S3method(predict,xgb)
 export(boost_mem)
 export(mem_boost_gll)
+export(validation)
 export(xboosting)

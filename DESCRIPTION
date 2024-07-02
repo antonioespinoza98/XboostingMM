@@ -22,5 +22,10 @@ Depends:
   R (>= 3.1)
 Imports:
   xgboost,
-  Matrix
+  Matrix,
+  dplyr,
+  survey,
+  srvyr,
+  data.table,
+  ggplot2
 RoxygenNote: 7.3.1
