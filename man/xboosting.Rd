@@ -32,6 +32,10 @@ xboosting(
 
 \item{minsplit}{minimum observations for a tree to split. Default: 20}
 
+\item{lambda}{regularization term on weights. Default: 1}
+
+\item{alpha}{regularization term on weights. Default: 0}
+
 \item{subsample}{sub-sample size for the tree training: Default: 0.5}
 }
 \value{
