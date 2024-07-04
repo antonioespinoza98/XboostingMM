@@ -21,10 +21,9 @@
 #' @importFrom data.table data.table
 #' @importFrom dplyr sym summarise group_by
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_manual labs geom_errorbar theme_minimal
-#' @return Returns a list of values and a `ggplot()` object with the Direct Estimates.
+#' @return Returns a list of values and a \code{ggplot()} object with the Direct Estimates.
 #' @export
 #'
-#' @examples
 validation <- function(test = NULL,
                        prediction = NULL,
                        validation_set = NULL,

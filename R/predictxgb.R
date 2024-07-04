@@ -1,7 +1,7 @@
 #' Predict Method for XtremeBoost Objects
 #'
 #' @description
-#' It takes an XtremeBoost model from the `xboosting()` and performs a prediction
+#' It takes an XtremeBoost model from the \code{xboosting()} and performs a prediction
 #'
 #' @param object an XtremeBoost object
 #' @param newdata data required to perform
@@ -13,7 +13,6 @@
 #' @returns a vector with predictions
 #' @export
 #'
-#' @examples
 #'
 predict.xgb <- function(object, newdata, n.trees, ...) {
   # Ensure newdata is in the correct format

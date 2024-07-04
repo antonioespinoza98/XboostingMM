@@ -17,12 +17,25 @@
 #' Computes Extreme Gradient Boosting Trees
 #'
 #' @description
-#' `xboosting()` relies on the Extreme Gradient Boosting model
+#' Relies on the Extreme Gradient Boosting model
 #' to generate the decision trees and subsequently an assembly of m trees.
 #'
+#' Initialize model with a constant value:
+#' \deqn{\hat{f}_0(x) = \arg \min \sum_{i=1}^N L(y_i, \theta)}
+#'
+#' Compute gradients and hessians.
+#'
+#' fit a weak learner:
+#'
+#' \deqn{\hat{\phi}_m = \sum_{i =1}^{Im} \phi_{im}I(x \in R_{im})}
+#'
+#' Update model:
+#'
+#' \deqn{\hat{f}_{m-1}(x) + \eta \cdot \hat{\phi}_m}
+#'
 #' @param formula an object of class formula
-#' @param data list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.
-#' @param loss by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.
+#' @param data list or environment (or object coercible by \code{as.data.frame} to a data frame) containing the variables in the model.
+#' @param loss by default it uses "reg:squarederror" more functions available in the \link[xgboost]{xgboost} documentation. Users, can pass a self-defined function to it.
 #' @param n.trees number of trees to be generated. Default: 100
 #' @param shrinkage learning rate. Default: 0.1
 #' @param interaction.depth maximum depth of the trees. Default: 1
@@ -33,13 +46,37 @@
 #'
 #' @importFrom stats model.frame terms reformulate predict
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' @references Chen T, He T, Benesty M, Khotilovich V, Tang Y, Cho H, Chen K, Mitchell R, Cano I,Zhou T, Li M, Xie J, Lin M, Geng Y, Li Y, Yuan J (2024). _xgboost: Extreme Gradient Boosting_. R package version 1.7.7.1,<https://CRAN.R-project.org/package=xgboost>.
-#' Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
+#' @references
+#'
+#' Chen T, He T, Benesty M, Khotilovich V, Tang Y, Cho H, Chen K, Mitchell R,
+#' Cano I,Zhou T, Li M, Xie J, Lin M, Geng Y, Li Y, Yuan J (2024).
+#'  _xgboost: Extreme Gradient Boosting_. R package version 1.7.7.1,<https://CRAN.R-project.org/package=xgboost>.
+#'
+#'
+#' Marie Salditt, Sarah Humberg & Steffen Nestler (2023)
+#' Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research,
+#' 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
+#'
+#' Corral, P., Henderson, H., & Segovia, S. (2023).
+#' Poverty Mapping in the Age of Machine Learning.
+#' World Bank policy research working paper. https://doi.org/10.1596/1813-9450-10429
 #'
 #' @returns an xtremeBoost object
 #' @export
 #'
 #' @examples
+#'
+#' fit <- xboosting(formula = y ~ covar1 + covar2,
+#' data = train,
+#' loss = custom_function,
+#' n.trees = 100,
+#' shrinkage = 0.3,
+#' interaction.depth = 10,
+#' minsplit = 20,
+#' lambda = 1,
+#' alpha = 0,
+#' subsample = 0.5)
+#'
 xboosting <- function(formula,
                       data = NULL,
                       loss = "reg:squarederror",

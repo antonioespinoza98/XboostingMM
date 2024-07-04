@@ -25,13 +25,13 @@ boost_mem(
 \arguments{
 \item{formula}{an object of class formula}
 
-\item{data}{list or environment (or object coercible by `as.data.frame` to a data frame) containing the variables in the model.}
+\item{data}{list or environment (or object coercible by \code{as.data.frame} to a data frame) containing the variables in the model.}
 
 \item{random}{an object of class formula with the random intercept}
 
 \item{shrinkage}{learning rate. Default: 0.1}
 
-\item{loss}{by default it uses "reg:squarederror" more functions available in the `xgboost` documentation. Users, can pass a self-defined function to it.}
+\item{loss}{by default it uses "reg:squarederror" more functions available in the \code{xgboost} documentation. Users, can pass a self-defined function to it.}
 
 \item{interaction.depth}{maximum depth of the trees. Default: 1}
 
@@ -57,8 +57,43 @@ boost_mem(
 list of values
 }
 \description{
-Function that leverages `xboosting()` to estimate the trees.
-`predict.xgb()` for prediction, and `mem_boost_gll()` for convergence.
+Function that leverages \code{xboosting()} to estimate the trees.
+\code{predict.xgb()} for prediction, and \code{mem_boost_gll()} for convergence.
+We first introduce the general unit-level formula for the Extreme Boosting Mix Effect Model
+\deqn{y_i = f(X_i) + Z_i b_i + e_i}
+Where:
+\eqn{f(X_i)} represents the Extreme Gradient Boosting Model.
+\eqn{Z_i} is an \eqn{n_i \times k} matrix for the random effects.
+\eqn{b_i} is a vector of random effects.
+\eqn{e_i} are the error terms.
+
+We assume that the current estimates of the random effects are correct, that is,
+\eqn{\hat{b}_i = b_i}, and a tree is fit to a transformed outcome from which
+the random effects have been removed
+\deqn{\bar{y}_i = y_i - Z_i \hat{b}_i}
+
+Once \eqn{\hat{f(X_i)}} has been fit, random effects \eqn{\hat{b}_i} are updated.
+
+\deqn{\hat{b}_i = \hat{D} Z_i^T \hat{V}_i^{-1} [y_i - \hat{f}(X_i)]}
+
+For formula reference for the generalised log-likelihood (GLL) criterion please
+refer to \link{mem_boost_gll}
+}
+\examples{
+
+fit <- boost_mem(
+formula = y ~ covar1 + covar2,
+data = train,
+random = (1|dam),
+shrinkage = 0.6,
+loss = custom_function,
+conv_memboost = 0.001,
+maxIter_memboost = 100,
+minIter_memboost = 0,
+verbose_memboost = FALSE
+)
+
+
 }
 \references{
 Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638

@@ -30,7 +30,7 @@ validation(
 \item{model}{Model name for the plot}
 }
 \value{
-Returns a list of values and a `ggplot()` object with the Direct Estimates.
+Returns a list of values and a \code{ggplot()} object with the Direct Estimates.
 }
 \description{
 A function that fits the Direct Estimates in Small Area Estimation

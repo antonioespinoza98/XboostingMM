@@ -19,7 +19,7 @@
 a vector with predictions
 }
 \description{
-It takes an XtremeBoost model from the `xboosting()` and performs a prediction
+It takes an XtremeBoost model from the \code{xboosting()} and performs a prediction
 }
 \references{
 Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
