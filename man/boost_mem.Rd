@@ -79,22 +79,6 @@ Once \eqn{\hat{f(X_i)}} has been fit, random effects \eqn{\hat{b}_i} are updated
 For formula reference for the generalised log-likelihood (GLL) criterion please
 refer to \link{mem_boost_gll}
 }
-\examples{
-
-fit <- boost_mem(
-formula = y ~ covar1 + covar2,
-data = train,
-random = (1|dam),
-shrinkage = 0.6,
-loss = custom_function,
-conv_memboost = 0.001,
-maxIter_memboost = 100,
-minIter_memboost = 0,
-verbose_memboost = FALSE
-)
-
-
-}
 \references{
 Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
 }

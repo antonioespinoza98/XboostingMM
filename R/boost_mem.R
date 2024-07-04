@@ -44,20 +44,6 @@
 #' @returns list of values
 #' @export
 #'
-#' @examples
-#'
-#' fit <- boost_mem(
-#' formula = y ~ covar1 + covar2,
-#' data = train,
-#' random = (1|dam),
-#' shrinkage = 0.6,
-#' loss = custom_function,
-#' conv_memboost = 0.001,
-#' maxIter_memboost = 100,
-#' minIter_memboost = 0,
-#' verbose_memboost = FALSE
-#' )
-#'
 #'
 boost_mem <- function(formula,
                       data = NULL,

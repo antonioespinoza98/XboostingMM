@@ -64,18 +64,6 @@
 #' @returns an xtremeBoost object
 #' @export
 #'
-#' @examples
-#'
-#' fit <- xboosting(formula = y ~ covar1 + covar2,
-#' data = train,
-#' loss = custom_function,
-#' n.trees = 100,
-#' shrinkage = 0.3,
-#' interaction.depth = 10,
-#' minsplit = 20,
-#' lambda = 1,
-#' alpha = 0,
-#' subsample = 0.5)
 #'
 xboosting <- function(formula,
                       data = NULL,

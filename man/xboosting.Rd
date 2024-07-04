@@ -58,20 +58,6 @@ Update model:
 
 \deqn{\hat{f}_{m-1}(x) + \eta \cdot \hat{\phi}_m}
 }
-\examples{
-
-fit <- xboosting(formula = y ~ covar1 + covar2,
-data = train,
-loss = custom_function,
-n.trees = 100,
-shrinkage = 0.3,
-interaction.depth = 10,
-minsplit = 20,
-lambda = 1,
-alpha = 0,
-subsample = 0.5)
-
-}
 \references{
 Chen T, He T, Benesty M, Khotilovich V, Tang Y, Cho H, Chen K, Mitchell R,
 Cano I,Zhou T, Li M, Xie J, Lin M, Geng Y, Li Y, Yuan J (2024).

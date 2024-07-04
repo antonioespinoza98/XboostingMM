@@ -16,7 +16,7 @@
 #'
 predict.xgb <- function(object, newdata, n.trees, ...) {
   # Ensure newdata is in the correct format
-  PredNames <- attr(stats::terms(formula), "term.labels")
+  PredNames <- attr(stats::terms(object$formula), "term.labels")
   newdata <- model.frame(terms(reformulate(PredNames)), data = newdata)
   # Get shrinkage value
   shrinkage <- object$shrinkage
