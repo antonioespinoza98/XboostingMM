@@ -34,6 +34,7 @@
 #' @param subsample sub-sample size for the tree training. Default: 0.5
 #' @param lambda regularization term on weights. Default: 1
 #' @param alpha regularization term on weights. Default: 0
+#' @param weight indicates the weight for each row of the input
 #' @param conv_memboost Convergence threshold. Default: 0.001
 #' @param maxIter_memboost maximum iterations. Default: 100
 #' @param minIter_memboost minimum iterations. Default: 0
@@ -56,6 +57,7 @@ boost_mem <- function(formula,
                       subsample = 0.5,
                       lambda = 1,
                       alpha = 0,
+                      weight = NULL,
                       conv_memboost = 0.001,
                       maxIter_memboost = 100,
                       minIter_memboost = 0,
@@ -159,6 +161,7 @@ boost_mem <- function(formula,
       minsplit = minsplit,
       alpha = alpha,
       lambda = lambda,
+      weight = weight,
       subsample = subsample
     )
 

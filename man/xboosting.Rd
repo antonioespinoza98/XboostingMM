@@ -14,6 +14,7 @@ xboosting(
   minsplit = 20,
   lambda = 1,
   alpha = 0,
+  weight = NULL,
   subsample = 0.5
 )
 }
@@ -35,6 +36,8 @@ xboosting(
 \item{lambda}{regularization term on weights. Default: 1}
 
 \item{alpha}{regularization term on weights. Default: 0}
+
+\item{weight}{indicates the weight for each row of the input}
 
 \item{subsample}{sub-sample size for the tree training: Default: 0.5}
 }

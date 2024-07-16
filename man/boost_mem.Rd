@@ -16,6 +16,7 @@ boost_mem(
   subsample = 0.5,
   lambda = 1,
   alpha = 0,
+  weight = NULL,
   conv_memboost = 0.001,
   maxIter_memboost = 100,
   minIter_memboost = 0,
@@ -44,6 +45,8 @@ boost_mem(
 \item{lambda}{regularization term on weights. Default: 1}
 
 \item{alpha}{regularization term on weights. Default: 0}
+
+\item{weight}{indicates the weight for each row of the input}
 
 \item{conv_memboost}{Convergence threshold. Default: 0.001}
 

@@ -43,6 +43,7 @@
 #' @param lambda regularization term on weights. Default: 1
 #' @param alpha regularization term on weights. Default: 0
 #' @param subsample sub-sample size for the tree training: Default: 0.5
+#' @param weight indicates the weight for each row of the input
 #'
 #' @importFrom stats model.frame terms reformulate predict
 #' @importFrom utils txtProgressBar setTxtProgressBar
@@ -74,6 +75,7 @@ xboosting <- function(formula,
                       minsplit = 20,
                       lambda = 1,
                       alpha = 0,
+                      weight = NULL,
                       subsample = 0.5) {
   # -- CHECKS
 
@@ -147,7 +149,8 @@ xboosting <- function(formula,
       data = Xsub_matrix,
       label = r,
       nrounds = 1,
-      verbose = 0
+      verbose = 0,
+      weight = weight
     )
 
     setTxtProgressBar(progress_est, i)
