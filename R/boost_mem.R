@@ -187,7 +187,7 @@ boost_mem <- function(formula,
       #- compute new bhati and new epsilons:
       bhat[ii, ] <- Dhat %*% t(Zi) %*% (InvVi %*% (Yi - fhati))
       ehat[idx] <- Yi - fhati - Zi %*% bhat[ii, ]
-      # }
+      }
 
       #- (iv): update Dhat and Sigma2hat
       DhatNew <- diag(0, p)
@@ -213,7 +213,6 @@ boost_mem <- function(formula,
       Dhat <- DhatNew / NID
       Sigma2hat <- Sigma2hatNew / TotalObs
 
-    }
 
     means.ranint <- rbind(means.ranint, mean(bhat[, 1]))
     errorVarList[[noIterations]] <- Sigma2hat
