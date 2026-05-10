@@ -158,8 +158,8 @@ xboosting <- function(formula,
     models[[i]] <- model
     # - get prediction for f residuals
     pred <- predict(model, newdata = X_matrix)
-    # - update overall model
-    f <- f + shrinkage * pred
+    # - update overall model (eta already applied inside XGBoost; don't double-shrink)
+    f <- f + pred
     preds_matrix[, i] <- pred
   }
   close(progress_est)

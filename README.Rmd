@@ -40,6 +40,64 @@ You can install the development version of XboostingMM like so:
 devtools::install_github("antonioespinoza98/XboostingMM")
 ```
 
+## Usage
+
+### Fit the model
+
+The main function is `boost_mem()`. Specify the outcome formula, a data frame, and a
+random-intercept formula using `~ 1 | group_variable`:
+
+``` r
+library(XboostingMM)
+
+result <- boost_mem(
+  formula           = y ~ x1 + x2,
+  data              = df,
+  random            = ~ 1 | area_id,   # grouping variable after |
+  shrinkage         = 0.1,             # XGBoost learning rate
+  interaction.depth = 1,               # tree depth (1 = stumps, recommended for SAE)
+  n.trees           = 100,
+  subsample         = 0.5,
+  conv_memboost     = 0.001,
+  maxIter_memboost  = 100,
+  verbose_memboost  = TRUE
+)
+```
+
+### Read results
+
+``` r
+result$fhat               # fitted values f̂(X) for each row (boosting component)
+result$raneffs            # matrix of estimated random effects b̂_i (one row per area)
+result$var_random_effects # estimated covariance matrix D̂
+result$errorVar           # estimated error variance σ̂²
+result$mse_approx         # named vector: approximate MSE per area (g1 BLUP term)
+result$logLik             # final Generalised Log-Likelihood
+result$noIterations       # number of EM iterations performed
+result$convWarning        # TRUE if algorithm did not converge within maxIter_memboost
+```
+
+### Compute small area estimates
+
+The small area estimate for area *i* is the sum of the boosting fit and the random effect:
+
+``` r
+area_estimates <- tapply(result$fhat, df$area_id, mean) + result$raneffs[, 1]
+area_se        <- sqrt(result$mse_approx)   # approximate standard error per area
+```
+
+### Predict on new data
+
+`predict.xgb()` returns the boosting component only (no random effects):
+
+``` r
+new_preds <- predict.xgb(
+  object  = result$boosting_ensemble,
+  newdata = new_df,    # data.frame with the same predictor columns
+  n.trees = 100        # must match n.trees used in boost_mem()
+)
+```
+
 ## References
 
 Chen T, He T, Benesty M, Khotilovich V, Tang Y, Cho H, Chen K, Mitchell R, Cano I, Zhou T, Li M, Xie J, Lin M, Geng Y, Li Y, Yuan J (2024). _xgboost: Extreme Gradient Boosting_. R package version 1.7.7.1, <https://CRAN.R-project.org/package=xgboost>.

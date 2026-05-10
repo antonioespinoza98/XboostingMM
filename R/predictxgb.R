@@ -1,16 +1,46 @@
 #' Predict Method for XtremeBoost Objects
 #'
 #' @description
-#' It takes an XtremeBoost model from the \code{xboosting()} and performs a prediction
+#' Generates predictions from an \code{xtremeBoost} object returned by \code{xboosting()}
+#' or accessible via \code{result$boosting_ensemble} from \code{boost_mem()}.
 #'
-#' @param object an XtremeBoost object
-#' @param newdata data required to perform
-#' @param n.trees number of trees to use from the object.
-#' @param ... additional arguments affecting the predictions produced.
+#' The prediction accumulates contributions from all trees:
+#' \deqn{\hat{f}(x) = \hat{f}_0 + \sum_{m=1}^{M} \hat{\phi}_m(x)}
+#' where \eqn{\hat{f}_0 = \bar{y}} is the mean-based initialisation and each
+#' \eqn{\hat{\phi}_m} is the output of the \eqn{m}-th fitted tree (with the learning
+#' rate already absorbed by XGBoost internally).
+#'
+#' This function predicts the \strong{boosting component only} — it does not add
+#' area-level random effects. To obtain small area estimates, add the relevant
+#' random effect \eqn{\hat{b}_i} from \code{boost_mem()}'s \code{raneffs} output.
+#'
+#' @param object an \code{xtremeBoost} object (from \code{xboosting()} or
+#'   \code{boost_mem()$boosting_ensemble}).
+#' @param newdata a \code{data.frame} containing the same predictor columns used
+#'   during training.
+#' @param n.trees number of trees to use for prediction. Must be \eqn{\leq} the
+#'   number of trees in \code{object}. Use the same value as \code{n.trees} passed
+#'   to \code{boost_mem()} for in-sample consistency.
+#' @param ... currently unused.
+#'
+#' @returns a numeric vector of predicted values, one per row of \code{newdata}.
+#'
+#' @examples
+#' \donttest{
+#' set.seed(42)
+#' df <- data.frame(y = rnorm(100), x1 = rnorm(100), x2 = rnorm(100),
+#'                  area = rep(1:10, each = 10))
+#'
+#' result <- boost_mem(y ~ x1 + x2, data = df, random = ~ 1 | area,
+#'                     n.trees = 50, maxIter_memboost = 10)
+#'
+#' # Predict on new data (boosting component only)
+#' new_df <- data.frame(x1 = rnorm(5), x2 = rnorm(5))
+#' preds  <- predict.xgb(result$boosting_ensemble, newdata = new_df, n.trees = 50)
+#' }
+#'
 #' @importFrom stats model.frame terms reformulate predict formula
 #' @references Marie Salditt, Sarah Humberg & Steffen Nestler (2023) Gradient Tree Boosting for Hierarchical Data, Multivariate Behavioral Research, 58:5, 911-937, DOI: 10.1080/00273171.2022.2146638
-#'
-#' @returns a vector with predictions
 #' @export
 #'
 #'
@@ -25,7 +55,7 @@ predict.xgb <- function(object, newdata, n.trees, ...) {
 
   # Generate predictions
   preds <- sapply(1:n.trees, function(i) {
-    shrinkage * predict(object$models[[i]], newdata = dnew)
+    predict(object$models[[i]], newdata = dnew)
   })
 
   # Get initial F_0
